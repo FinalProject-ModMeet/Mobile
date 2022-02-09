@@ -6,107 +6,67 @@
  * @flow strict-local
  */
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, {Component} from 'react';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import PushNotification, {Importance} from 'react-native-push-notification';
+import {Button, PermissionsAndroid, Text, View} from "react-native";
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
+class App extends Component{
+  constructor(props) {
+    super(props);
+  }
+  componentDidMount(){
+      PushNotification.configure({
+          onRegister: function (token) {
+              console.log("TOKEN:", token);
           },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
+          onNotification: function (notification) {
+              console.log("NOTIFICATION:", notification);
           },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+          onAction: function (notification) {
+              console.log("ACTION:", notification.action);
+              console.log("NOTIFICATION:", notification);
+          },
+          onRegistrationError: function(err) {
+              console.error(err.message, err);
+          },
+          senderID: "718599460128",
+          popInitialNotification: true,
+          requestPermissions: true,
+          permissions: {
+              alert: true,
+              badge: true,
+              sound: true
+          },
+      });
+  }
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  pushnoti(){
+      PushNotification.createChannel(
+          {
+            channelId: "test", // (required)
+            channelName: "My channel", // (required)
+            channelDescription: "A channel to categorise your notifications", // (optional) default: undefined.
+            playSound: true, // (optional) default: true
+            soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
+            importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+            vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+          },
+      )
+      PushNotification.localNotification({
+        channelId: "test",
+        title: "TEST NOTIFY",
+        message: "Hello World",
+      });
+  }
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+  render(){
+    return(
+        <View>
+          <Text>HELLO</Text>
+          <Button onPress={this.pushnoti.bind(this)} title={"TestNoti"} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
+    );
+  }
+}
 export default App;
