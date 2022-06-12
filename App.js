@@ -62,9 +62,20 @@ class App extends Component{
 
   render(){
     return(
-        <View>
-          <Text>HELLO</Text>
-          <Button onPress={this.pushnoti.bind(this)} title={"TestNoti"} />
+        <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin:10}}>
+          <Text style={{
+              textAlign: 'center',
+              fontSize: 16,
+              fontWeight: "bold",
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin:10}}>
+              Test Noti</Text>
+          <Button style={{color: 'red'}} onPress={this.pushnoti.bind(this)} title={"Push Notify"} />
         </View>
     );
   }
